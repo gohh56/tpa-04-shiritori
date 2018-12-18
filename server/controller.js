@@ -78,6 +78,12 @@ const playWord = function(req, res) {
 
 const resetGame = function(req, res) {
   const { playerName } = req.body;
+
+  if (!playerName) {
+    sendInvalidPlayerNameError(res);
+    return;
+  }
+
   gameInstances.set(playerName, new Game());
   res.json({
     success: true,

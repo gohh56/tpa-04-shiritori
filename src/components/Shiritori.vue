@@ -23,6 +23,7 @@
         <button type="submit">Submit</button>
       </form>
       <h2 v-if="lost" class="gameover-message">GAME OVER</h2>
+      <button v-if="lost" v-on:click="handleReset">Reset</button>
       <h2
         class="message"
         v-bind:class="{
@@ -78,11 +79,26 @@ export default {
           } else {
             this.endGame();
           }
+          this.inputWord = '';
           this.refreshWordList();
         });
     },
     handleNameChange: function() {
       this.refreshWordList();
+    },
+    handleReset: function() {
+      apiService.resetGame({
+        playerName: this.playerName,
+      })
+        .then((resp) => {
+          if (resp.valid) {
+            this.showValidMessage();
+          } else {
+            this.startGame();
+          }
+          this.inputWord = '';
+          this.refreshWordList();
+        });
     },
     startGame: function() {
       this.lost = false;
