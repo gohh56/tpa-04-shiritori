@@ -73,31 +73,31 @@ export default {
         playerName: this.playerName,
         inputWord: this.inputWord,
       })
-        .then((resp) => {
-          if (resp.valid) {
+        .then((res) => {
+          if (res.valid) {
             this.showValidMessage();
           } else {
             this.endGame();
           }
           this.inputWord = '';
           this.refreshWordList();
+        }).catch(() => {
+          this.errorMessage = 'Please enter a player name or input word correctly.';
+          console.error('error');
         });
     },
     handleNameChange: function() {
       this.refreshWordList();
     },
     handleReset: function() {
-      apiService.resetGame({
-        playerName: this.playerName,
-      })
-        .then((resp) => {
-          if (resp.valid) {
-            this.showValidMessage();
-          } else {
-            this.startGame();
-          }
+      apiService.resetGame(this.playerName)
+        .then(() => {
+          this.startGame();
           this.inputWord = '';
           this.refreshWordList();
+        }).catch(() => {
+          this.errorMessage = 'Can not reset game.';
+          console.error('error');
         });
     },
     startGame: function() {
@@ -136,10 +136,13 @@ export default {
             this.setScore(words.length);
             this.errorMessage = '';
           } else if (message === 'invalid player name') {
-            this.errorMessage = 'Please enter a player name';
+            this.errorMessage = 'Please enter a player name.';
           } else {
             this.errorMessage = message;
           }
+        }).catch(() => {
+          this.errorMessage = 'Can not refresh.';
+          console.error('error');
         });
     },
   },

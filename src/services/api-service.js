@@ -16,7 +16,7 @@ const apiService = {
     })
       .then(resp => resp.json());
   },
-  resetGame: function({ playerName }) {
+  resetGame: function(playerName) {
     return fetch('/api/reset-game', {
       method: 'post',
       headers: {
@@ -27,7 +27,7 @@ const apiService = {
       }),
     })
       .then(resp => resp.json());
-  }
+  },
 };
 
 export default apiService;
