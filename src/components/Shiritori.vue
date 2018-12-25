@@ -23,6 +23,7 @@
         <button type="submit">Submit</button>
       </form>
       <h2 v-if="lost" class="gameover-message">GAME OVER</h2>
+      <button v-if="lost" v-on:click="handleReset">Reset</button>
       <h2
         class="message"
         v-bind:class="{
@@ -72,17 +73,32 @@ export default {
         playerName: this.playerName,
         inputWord: this.inputWord,
       })
-        .then((resp) => {
-          if (resp.valid) {
+        .then((res) => {
+          if (res.valid) {
             this.showValidMessage();
           } else {
             this.endGame();
           }
+          this.inputWord = '';
           this.refreshWordList();
+        }).catch(() => {
+          this.errorMessage = 'Please enter a player name or input word correctly.';
+          console.error('error');
         });
     },
     handleNameChange: function() {
       this.refreshWordList();
+    },
+    handleReset: function() {
+      apiService.resetGame(this.playerName)
+        .then(() => {
+          this.startGame();
+          this.inputWord = '';
+          this.refreshWordList();
+        }).catch(() => {
+          this.errorMessage = 'Can not reset game.';
+          console.error('error');
+        });
     },
     startGame: function() {
       this.lost = false;
@@ -120,10 +136,13 @@ export default {
             this.setScore(words.length);
             this.errorMessage = '';
           } else if (message === 'invalid player name') {
-            this.errorMessage = 'Please enter a player name';
+            this.errorMessage = 'Please enter a player name.';
           } else {
             this.errorMessage = message;
           }
+        }).catch(() => {
+          this.errorMessage = 'Can not refresh.';
+          console.error('error');
         });
     },
   },
